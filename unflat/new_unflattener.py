@@ -143,7 +143,7 @@ class Unflattener:
                     valrange_value = valrange.split(":==")[1]
                     # logger.debug("valrange_value: 0x%x", int(valrange_value, 16))
                     if self.calc_entroy(int(valrange_value, 16)):
-                        logger.info("valrange_name[%s] valrange_value[0x%x] 有足够的熵", valrange_name, int(valrange_value, 16))
+                        logger.debug("valrange_name[%s] valrange_value[0x%x] 有足够的熵", valrange_name, int(valrange_value, 16))
                         self.possible_states.append({
                             'mblock_id': mblock_id,
                             'valrange_name': valrange_name.split(".")[0],

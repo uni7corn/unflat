@@ -1,5 +1,9 @@
 from ida_hexrays import *
 import ida_segment
+import logging
+from .logger_config import get_logger
+
+logger = get_logger(__name__)
 
 class MopOptimizer(mop_visitor_t):
     def visit_mop(self, op: mop_t, op_type: int, is_target: bool):
@@ -25,5 +29,5 @@ class RemoveDeadCode(minsn_visitor_t):
     def _optimizer(self, minsn:minsn_t):
         mopOptimizer = MopOptimizer()
         minsn.for_all_ops(mopOptimizer)
-        print(f"{self.minsn_line}: {minsn.dstr()}")
+        logging.debug(f"{self.minsn_line}: {minsn.dstr()}")
         self.minsn_line += 1

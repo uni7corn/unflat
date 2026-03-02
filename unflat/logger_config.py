@@ -3,11 +3,12 @@ import os
 import datetime
 from typing import Optional
 
-# 日志目录
-LOG_DIR = "D:\\project\\ida_split\\log"
+# 日志目录（使用当前脚本所在目录）
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_DIR = os.path.join(CURRENT_DIR, "log")
 
 # 日志级别
-LOG_LEVEL = logging.DEBUG
+LOG_LEVEL = logging.INFO
 
 # 日志格式
 LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
