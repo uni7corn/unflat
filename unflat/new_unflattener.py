@@ -1,5 +1,7 @@
 from ida_hexrays import *
 from .cfgUtil import *
+from .my_microcode_log import *
+from .instructions import Instructions
 from .remove_dead_code import RemoveDeadCode
 import logging
 from .logger_config import get_logger
@@ -11,7 +13,6 @@ logger = get_logger(__name__)
 JMP_OPCODE_HANDLED = [m_jnz, m_jz, m_jae, m_jb, m_ja, m_jbe, m_jge, m_jg, m_jl, m_jle]
 
 hook_instance = None
-
 class StateAssignment(TypedDict):
     mblock_id: int
     storage: str
@@ -143,7 +144,7 @@ class Unflattener:
                     valrange_value = valrange.split(":==")[1]
                     # logger.debug("valrange_value: 0x%x", int(valrange_value, 16))
                     if self.calc_entroy(int(valrange_value, 16)):
-                        logger.debug("valrange_name[%s] valrange_value[0x%x] 有足够的熵", valrange_name, int(valrange_value, 16))
+                        logger.info("valrange_name[%s] valrange_value[0x%x] 有足够的熵", valrange_name, int(valrange_value, 16))
                         self.possible_states.append({
                             'mblock_id': mblock_id,
                             'valrange_name': valrange_name.split(".")[0],
@@ -218,7 +219,7 @@ class Unflattener:
 
     def deflat_level_3(self):
         """
-        仅修改最多用于比较的分发器部分
+        仅修改最多分支部分
         """
         self.find_use_compare()
         for state_assignment in self.state_assignments:
@@ -273,11 +274,12 @@ class HexraysDecompilationHook(Hexrays_Hooks):
             if config.enable_remove_dead_code:
                 rdc = RemoveDeadCode()
                 mba.for_all_topinsns(rdc)
+                rdc.optimizer()
             # struction = Instructions(mba)
             # struction.instructions_fix()
             if config.enable_ollvm_unflatten:
                 unflat = Unflattener(mba)
-                unflat.deflat(4)
+                unflat.deflat(2)
             # mba.remove_empty_and_unreachable_blocks()
             # dump_microcode_for_debug(mba, "D:\\project\\ida_split", "after_unflatten")
             self.deflat_list.append(mba.entry_ea)
